@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class MqttSubscribe extends Command
 {
@@ -14,7 +15,7 @@ class MqttSubscribe extends Command
 
     public function handle()
     {
-        $server   = '127.0.0.1';
+        $server   = '34.128.77.93';
         $port     = 1883;
         $clientId = 'laravel-subscriber-' . uniqid();
 
@@ -44,10 +45,19 @@ class MqttSubscribe extends Command
             ];
 
             // Simpan ke cache (bukan database)
-            Cache::put('latest_sensor_data', $data, 120);
+            // Cache::put('latest_sensor_data', $data, 120);
+            DB::table('sensor_data')->insert([
+                'device_id' => 1,
+                'temperature' => $payload['temperature'] ?? null,
+                'humidity' => $payload['humidity'] ?? null,
+                'distance' => $payload['distance'] ?? null,
+                'received_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
 
             $this->info('Data cached: ' . json_encode($data));
-
         }, 0);
 
         // Loop terus (wajib)
