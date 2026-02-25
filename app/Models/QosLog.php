@@ -15,4 +15,8 @@ class QosLog extends Model
         'packet_loss',
         'tested_at',
     ];
+
+    protected $casts = [
+    'tested_at' => 'datetime',
+    ];
 }
