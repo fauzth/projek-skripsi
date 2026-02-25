@@ -13,18 +13,22 @@ class SensorController extends Controller
     {
         $request->validate([
             'device_id' => 'required|exists:devices,id',
-            'pond_id' => 'required|exists:ponds,id',
             'temperature' => 'nullable|numeric',
             'humidity' => 'nullable|numeric',
             'distance' => 'nullable|numeric',
+            'battery_voltage' => 'nullable|numeric',
+            'rssi' => 'nullable|numeric',
+            'snr' => 'nullable|numeric',
         ]);
 
         $data = SensorData::create([
             'device_id' => $request->device_id,
-            'pond_id' => $request->pond_id,
             'temperature' => $request->temperature,
             'humidity' => $request->humidity,
             'distance' => $request->distance,
+            'battery_voltage' => $request->battery_voltage,
+            'rssi' => $request->rssi,
+            'snr' => $request->snr,
             'received_at' => now(),
         ]);
 
