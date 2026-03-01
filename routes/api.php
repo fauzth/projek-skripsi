@@ -9,8 +9,12 @@ use App\Http\Controllers\Api\ImageAnalysisController;
 
 // SENSOR
 Route::post('/sensor', [SensorController::class, 'store']);
-Route::get('/sensor/latest', [SensorController::class, 'latest']);
+// Route::get('/sensor/latest', [SensorController::class, 'latest']);
+Route::prefix('sensor')->group(function () {
+    Route::get('/latest', [SensorController::class, 'latest']);
+});
 Route::get('/sensor/average/{pondId}', [SensorController::class, 'average']);
+Route::get('/sensor/history', [SensorController::class, 'history']);
 
 
 // IMAGE ANALYSIS

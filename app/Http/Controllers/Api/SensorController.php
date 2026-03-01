@@ -39,12 +39,24 @@ class SensorController extends Controller
     }
 
     // GET: Data terbaru per kolam
+    // public function latest()
+    // {
+    //     $data = SensorData::latest('received_at')
+    //         ->take(10)
+    //         ->get();
+
+    //     return response()->json($data);
+    // }
     public function latest()
     {
-        $data = SensorData::latest('received_at')
-            ->take(10)
-            ->get();
-
+        $data = SensorData::latest()->first();
+        return response()->json($data);
+    }
+    public function history()
+    {
+        $data = SensorData::orderBy('created_at','desc')
+                      ->limit(50)
+                      ->get();
         return response()->json($data);
     }
 
