@@ -11,7 +11,9 @@ use App\Http\Controllers\MonitoringKolamController;
 Route::get('/', [DashboardController::class, 'index']);
 Route::get('/dashboard', [DashboardController::class, 'index']);
 
-Route::get('/kolam', [MonitoringKolamController::class, 'index']);
+// Route::get('/kolam', [MonitoringKolamController::class, 'index']);
+Route::get('/kolam', [MonitoringKolamController::class, 'index'])
+    ->name('monitoring.kolam');
 Route::get('/jaringan', [MonitoringJaringanController::class, 'index']);
 
 

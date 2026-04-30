@@ -7,34 +7,38 @@ use App\Models\Pond;
 
 class MonitoringKolamController extends Controller
 {
+    public function index()
+    {
+        $ponds = Pond::with([
+            'devices.sensorData' => function ($query) {
+                $query->latest('received_at')->limit(1);
+            }
+        ])->get();
 
+        $poolsData = $ponds->map(function ($pond) {
 
-public function index()
-{
-    $ponds = Pond::with([
-        'devices.sensorData' => function ($query) {
-            $query->latest('received_at')->limit(1);
-        }
-    ])->get();
+            $device = $pond->devices->first();
+            $latest = $device?->sensorData->first();
 
-    $poolsData = $ponds->map(function ($pond) {
+            return [
+                'id' => $pond->id,
+                'name' => $pond->pond_name,
 
-        $device = $pond->devices->first();
-        $latest = $device?->sensorData->first();
+                // 🔥 FIX FIELD BARU
+                'temp_pakan' => $latest?->temp_pakan,
+                'hum_pakan' => $latest?->hum_pakan,
 
-        return [
-            'id' => $pond->id,
-            'name' => $pond->pond_name,
-            'temperature' => $latest?->temperature,
-            'humidity' => $latest?->humidity,
-            'received_at' => $latest?->received_at,
-        ];
-    })->values(); // penting supaya jadi array bersih
+                'temp_udara' => $latest?->temp_udara,
+                'hum_udara' => $latest?->hum_udara,
 
-    return Inertia::render('MonitorKolam', [
-        'poolsData' => $poolsData
-    ]);
-}
+                'intensitas_cahaya' => $latest?->intensitas_cahaya,
 
+                'received_at' => $latest?->received_at,
+            ];
+        })->values();
 
+        return Inertia::render('MonitorKolam', [
+            'poolsData' => $poolsData
+        ]);
+    }
 }

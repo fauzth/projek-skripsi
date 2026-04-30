@@ -7,15 +7,23 @@ use App\Http\Controllers\Api\ImageAnalysisController;
 
 
 
-// SENSOR
-Route::post('/sensor', [SensorController::class, 'store']);
-// Route::get('/sensor/latest', [SensorController::class, 'latest']);
 Route::prefix('sensor')->group(function () {
-    Route::get('/latest', [SensorController::class, 'latest']);
-});
-Route::get('/sensor/average/{pondId}', [SensorController::class, 'average']);
-Route::get('/sensor/history', [SensorController::class, 'history']);
 
+    // 🔥 SIMPAN DATA (optional, kalau masih dipakai)
+    Route::post('/', [SensorController::class, 'store']);
+
+    // 🔥 DATA TERBARU (GLOBAL)
+    Route::get('/latest', [SensorController::class, 'latest']);
+
+    // 🔥 DATA TERBARU PER KOLAM
+    Route::get('/latest/{pondId}', [SensorController::class, 'latestByPond']);
+
+    // 🔥 HISTORY
+    Route::get('/history', [SensorController::class, 'history']);
+
+    // 🔥 AVERAGE (optional)
+    Route::get('/average/{pondId}', [SensorController::class, 'average']);
+});
 
 // IMAGE ANALYSIS
 Route::get('/analysis', [ImageAnalysisController::class, 'index']);

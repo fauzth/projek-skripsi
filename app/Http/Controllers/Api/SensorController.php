@@ -9,69 +9,38 @@ use App\Models\SensorData;
 class SensorController extends Controller
 {
     // POST: Simpan data sensor (dari ESP / MQTT)
-    public function store(Request $request)
-    {
-        $request->validate([
-            'device_id' => 'required|exists:devices,id',
-            'temperature' => 'nullable|numeric',
-            'humidity' => 'nullable|numeric',
-            'distance' => 'nullable|numeric',
-            'battery_voltage' => 'nullable|numeric',
-            'rssi' => 'nullable|numeric',
-            'snr' => 'nullable|numeric',
-        ]);
+   public function latest()
+{
+    // 🔥 Ambil data udara terbaru (yang valid)
+    $latestUdara = SensorData::whereNotNull('temp_udara')
+        ->whereNotNull('hum_udara')
+        ->orderByDesc('received_at')
+        ->first();
 
-        $data = SensorData::create([
-            'device_id' => $request->device_id,
-            'temperature' => $request->temperature,
-            'humidity' => $request->humidity,
-            'distance' => $request->distance,
-            'battery_voltage' => $request->battery_voltage,
-            'rssi' => $request->rssi,
-            'snr' => $request->snr,
-            'received_at' => now(),
-        ]);
+    // 🔥 Ambil data terbaru tiap device (kolam)
+    $devices = \App\Models\Device::all();
 
-        return response()->json([
-            'message' => 'Sensor data saved',
-            'data' => $data
-        ], 201);
-    }
+    $kolam = $devices->map(function ($device) {
 
-    // GET: Data terbaru per kolam
-    // public function latest()
-    // {
-    //     $data = SensorData::latest('received_at')
-    //         ->take(10)
-    //         ->get();
-
-    //     return response()->json($data);
-    // }
-    public function latest()
-    {
-        $data = SensorData::latest()->first();
-        return response()->json($data);
-    }
-    public function history()
-    {
-        $data = SensorData::orderBy('created_at','desc')
-                      ->limit(50)
-                      ->get();
-        return response()->json($data);
-    }
-
-
-    // GET: Rata-rata per kolam
-    public function average($pondId)
-    {
-        $avg = SensorData::where('pond_id', $pondId)
-            ->selectRaw('
-                AVG(temperature) as avg_temp,
-                AVG(humidity) as avg_humidity,
-                AVG(distance) as avg_distance
-            ')
+        $latest = SensorData::where('device_id', $device->id)
+            ->orderByDesc('received_at')
             ->first();
 
-        return response()->json($avg);
-    }
+        return [
+            'device_id' => $device->id,
+            'name' => $device->device_name,
+
+            'temp_pakan' => $latest->temp_pakan ?? 0,
+            'hum_pakan' => $latest->hum_pakan ?? 0,
+
+            'updated_at' => $latest->received_at ?? null,
+        ];
+    });
+
+    return response()->json([
+        'temp_udara' => $latestUdara->temp_udara ?? 0,
+        'hum_udara' => $latestUdara->hum_udara ?? 0,
+        'kolam' => $kolam
+    ]);
+}
 }
