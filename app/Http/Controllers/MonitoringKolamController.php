@@ -37,11 +37,18 @@ class MonitoringKolamController extends Controller
                 'name' => $pond->pond_name,
 
                
-                'temp_pakan' => $latest?->temp_pakan,
-                'hum_pakan' => $latest?->hum_pakan,
+                // 'temp_pakan' => $latest?->temp_pakan,
+                // 'hum_pakan' => $latest?->hum_pakan,
 
-                'temp_udara' => $latest?->temp_udara,
-                'hum_udara' => $latest?->hum_udara,
+                // 'temp_udara' => $latest?->temp_udara,
+                // 'hum_udara' => $latest?->hum_udara,
+                'temp_pakan' => $latest?->temperature,
+                'hum_pakan' => $latest?->humidity,
+
+                'temp_udara' => $latest?->temperature,
+                'hum_udara' => $latest?->humidity,
+
+                // 'intensitas_cahaya' => $latest?->distance,
 
                 'intensitas_cahaya' => $latest?->intensitas_cahaya,
 

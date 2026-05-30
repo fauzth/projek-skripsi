@@ -38,9 +38,8 @@ class CameraController extends Controller
     // PYTHON PROCESS
     // =====================================================
 
-    $python = "/var/www/projek-skripsi/venv/bin/python";
-
-    $script = "/var/www/projek-skripsi/python/detect.py";
+    $python = "/home/ubuntu/projek-skripsi/venv/bin/python";
+    $script = "/home/ubuntu/projek-skripsi/python/detect.py";
 
     $command = "$python $script \"$fullPath\"";
 
